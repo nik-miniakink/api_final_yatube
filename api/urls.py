@@ -8,12 +8,10 @@ from rest_framework.routers import DefaultRouter
 
 from .views import PostViewSet, CommentViewSet, FollowList, GroupList
 
-#
+
 router = DefaultRouter()
 router.register(r'posts/(?P<post_id>\d+)/comments', CommentViewSet, basename='Comment')
 router.register('posts', PostViewSet, basename="Post")
-
-
 
 urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
