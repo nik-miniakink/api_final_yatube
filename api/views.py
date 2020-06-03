@@ -27,7 +27,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = [AllowAny, IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def get_post(self):
         post = get_object_or_404(Post, id=self.kwargs['post_id'])
@@ -47,7 +47,6 @@ class CommentViewSet(viewsets.ModelViewSet):
 class GroupList(generics.ListCreateAPIView):
     serializer_class = GroupSerializer
     queryset = Group.objects.all()
-    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 class FollowList(generics.ListCreateAPIView):
