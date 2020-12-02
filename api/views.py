@@ -1,8 +1,8 @@
 from django.shortcuts import get_object_or_404
 
 from rest_framework import viewsets, generics, filters, status
-from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
-from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.exceptions import ValidationError
 
 from .models import Post, Comment, Follow, User, Group
 from .serializers import PostSerializer, CommentSerializer, FollowSerializer, GroupSerializer
@@ -55,21 +55,12 @@ class FollowList(generics.ListCreateAPIView):
     filter_backends = [filters.SearchFilter]
     search_fields = ['=following__username', '=user__username']
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+    def perform_create(self, serializer):
 
-        following = self.request.data.get('following')
-        following = User.objects.get(username=following)
+        username = self.request.data.get('following')
+        following = get_object_or_404(User, username=username)
         user = self.request.user
-        followers = Follow.objects.filter(user=user, following=following)
-
-        if followers:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        serializer.save(
-            user=user,
-            following=following
-        )
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        follow = Follow.objects.filter(user=user, following=following)
+        if follow:
+            raise ValidationError()
+        serializer.save(user=user, following=following)

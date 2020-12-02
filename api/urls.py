@@ -13,6 +13,7 @@ router = DefaultRouter()
 router.register(r'posts/(?P<post_id>\d+)/comments', CommentViewSet, basename='Comment')
 router.register('posts', PostViewSet, basename="Post")
 
+
 urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
@@ -20,3 +21,4 @@ urlpatterns = [
     path('group/', GroupList.as_view()),
     path('follow/', FollowList.as_view())
 ]
+
